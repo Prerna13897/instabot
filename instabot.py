@@ -29,10 +29,11 @@ def like_on_user_post_id(user_id):
     Access_token={'access_token':App_Access_token}                                             #To like a user_post
     url_post_like= BASE_URL+"media/"+(user_current_post_id)+"/likes"
     requests.post(url_post_like,Access_token).json()
+like_on_user_post_id("rk_chaudhary300")
 
 def comment_on_user_id(user_id):
     user_current_post_id=get_user_post_id(user_id)
-    Access_token_Plus_comment ={'access_token':App_Access_token,'text':"#kkt"}                #To comment on user_id
+    Access_token_Plus_comment ={'access_token':App_Access_token,'text':"kkt"}                #To comment on user_id
     url_post_comment= BASE_URL+"media/"+user_current_post_id+"/comments"
     requests.post(url_post_comment,Access_token_Plus_comment).json()
 
