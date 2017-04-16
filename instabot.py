@@ -203,6 +203,62 @@ def avg_words_per_comment(post_id):
              comments_id.append(comment['id'])
          average_words = float(no_of_words) / len(list_of_comments)
          print("average no of words per comment in post print = %.2f" % average_words)
+print("\nHello User! Welcome to the Instabot Environment.")
+Input ="y" or "Y"
+while Input =="y" or "Y":
+    print("Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")
+    username = raw_input()
+    if username not in ['manpreet287', 'rk_chaudhary300']:
+        print"you enter wrong username"
+        print("please!!Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")
+    else :
+     print("\nWhat do you want to do using the bot?")
+     print("\n1. Get the Details of the owner.")
+     print("\n2. Get the UserId of the User.")
+     print("\n3. Get Information about the User.")
+     print("\n4. Get the post_id and post_links of the User on the basis of given criteria.")
+     print("\n5. Like a post of the User.")
+     print("\n6. Comment on post of the User.")
+     print("\n7. search the comment containing a particular word.")
+     print("\n8. Delete the comment containing a particular word.")
+     print("\n9. Get the average no. of words per comment in specified post.")
+     print("\n10. Exit.\n\n")
+     choice=raw_input()
+     if choice in ['1', '2', '3', '4', '5', '6', '7', '8','9']:
+       if choice == "1":
+         admin_info()  # for like a pic
+       elif choice == "2":
+          user_id = client_search_by_username(username)
+          print("UserId   : %s" % user_id)
+       elif choice == "3":
+        info_of_user(username)
+       elif choice == '4':
+         post_id, post_link = get_user_post_id(username)
+         if post_id and post_link:
+             print("\nPost Id : %s" % post_id)
+             print("Post Link : %s" % post_link)
+       elif choice == '5':
+           like_on_user_post_id(username)
+       elif choice == '6':
+          comment_on_user_id(username)
+       elif choice == '7':
+          search_comment_id(username)
+       elif choice == '8':
+           delete_comment(username)
+       elif choice =='9':
+           avg_words_per_comment(post_id)
+       elif choice == '10':
+          break
+
+     else :
+         print("You entered the wrong choice. Please choose from given options.")
+         choice = input("\nEnter your choice (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9) : ")
+
+    print ("\npress 'Y' or 'y' to continue or press any key to exit\n")
+    Input = raw_input()
+
+print("\nTHANKS FOR USING INSTABOT\nhope you enjoy the services")
+
 
 
 
