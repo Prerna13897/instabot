@@ -167,7 +167,7 @@ def search_comment_id(username): # for searching a paricular comment from post i
             print(str(i+1) + ". " + comments_found[i])
         return comments_id_found, post_id, comments_found, user_found
 
-search_comment_id("manpreet287")
+#search_comment_id("manpreet287")
 
 def delete_comment(username):
     comments_id_found,post_id,comments_found,user_found=search_comment_id(username)
@@ -186,7 +186,23 @@ def delete_comment(username):
         else:
             print("Some error occurred. Try Again Later!!")
 
-
+def avg_words_per_comment(post_id):
+    user_id=client_search_by_username(username,post)
+    post_id=get_user_post_id(username)
+    url= BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" + App_Access_token
+    fetch_info =requests.get(url).json()
+    if len(fetch_info['data'])==0:
+       print("there is no comment on this post")
+    else:
+         list_of_comments= []
+         no_of_words = 0
+         comments_id = []
+         for commments in fetch_info['data']:
+             list_of_comments.append(comment['text'])
+             no_of_words += len(comment['text'].split())
+             comments_id.append(comment['id'])
+         average_words = float(no_of_words) / len(list_of_comments)
+         print("average no of words per comment in post print = %.2f" % average_words)
 
 
 
