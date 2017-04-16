@@ -1,40 +1,99 @@
+# ______________________________________________________INSTABOT_______________________________________________________________________#
 import requests
 App_Access_token = "5000190155.fc9a349.697c42586a294b6db99b941b0f84f1a2"
 BASE_URL = "https://api.instagram.com/v1/"
 def admin_info():
     owner_url = BASE_URL + "users/self/?access_token=" + App_Access_token   #https://api.instagram.com/v1/users/self/?access_token=ACCESS-TOKEN
     owner_info = requests.get(owner_url).json()                             #Get information about the owner of the access_token
-    print owner_info
+    #print owner_info
     #print owner_info["data"]["username"]
     #print owner_info["data"]["bio"]
 #admin_info()
 
-def client_search_by_username(insta_user):
-    client_url=BASE_URL+"users/search?q="+insta_user+"&access_token="+App_Access_token   #https://api.instagram.com/v1/users/search?q=jack&access_token=ACCESS-TOKEN
-    client_info=requests.get(client_url).json()                                   #search for user by name
-   # print client_info
-    return client_info["data"][0]["id"]
-#client_info_by_username("api_17790")
+def client_search_by_username(username):                                    #search for user by username
+    client_url=BASE_URL+"users/search?q="+username+"&access_token="+App_Access_token    #Get a list of users matching the query
+    client_info=requests.get(client_url).json()                              #The function should make a GET call to search user with the particular username
+    #print client_info
+    if client_info['data'] == []:
+           print("sorry!!!!User with giving username doesn't exist")           #If the user is not found then the function should print a meaningful message
+           return 0
+    else:
+        user_id = client_info['data'][0]['id']                                 #If multiple users are found the function should accept the first one
+        return user_id                                                       #Upon successful search, the function should return the user's id
 
-def get_user_post_id(insta_username):
-    insta_user_id=client_search_by_username(insta_username)
+client_search_by_username("manpreet287")
+def get_user_post_id(username):
+    insta_user_id=client_search_by_username(username)                 #The function should make use of the above created function to fetch the user's Id using the username.
     request_url= BASE_URL+"users/"+insta_user_id+"/media/recent/?access_token="+App_Access_token    #https://api.instagram.com/v1/users/{user-id}/media/recent/?access_token=ACCESS-TOKEN
-    #print request_url                                                                               #Get the most recent media published by a user.
-    request_for_user_to_get_all_post = requests.get(request_url).json()
-    return request_for_user_to_get_all_post["data"][0]['id']
-get_user_post_id("rk_chaudhary300")
+    #print request_url                                                                                #Get the total no of recent media published by a user.
+    request_to_get_all_post = requests.get(request_url).json()
+    if len(request_to_get_all_post["data"])== 0:
+        print("\nNo Posts Found for this User !")
+    else :
+        posts =len(request_to_get_all_post["data"])
+        total_posts = str(posts)
+        print(" The " + username + " have " + total_posts + " total posts.")
+        post_ids = []
+        post_likes = []
+        post_comments = []
+        post_links = []
+        for media in (request_to_get_all_post['data']):
+            post_ids.append(media['id'])
+            post_likes.append(media['likes']['count'])
+            post_comments.append(media['comments']['count'])
+            post_links.append(media['link'])
+        print("\nWhich Recent Post you want to select ?")
+        print("1. The post having maximum likes.")
+        print("2. The post having minimum likes.")
+        print("3. The post having maximum comment.")
+        print("4. The post having minimum comments.")
+        choice = input("\nEnter your choice (1 or 2 or 3 or 4 ) : ")
+        if int(choice) == 1:
+                dictionary = dict(zip(post_ids,post_likes))
+                dictionary=sorted(dictionary, key=dictionary.__getitem__)
+                max_likes = max(post_likes)
+                return dictionary[max_likes]
+        elif int(choice) == 2:
+                dictionary = dict(zip(post_ids, post_likes))
+                dictionary=sorted(dictionary, key=dictionary.__getitem__)
+                min_likes = min(post_likes)
+                return dictionary[min_likes]
+        elif int(choice) == 3:
+                dictionary = dict(zip(post_ids, post_comments))
+                dictionary=sorted(dictionary, key=dictionary.__getitem__)
+                max_comments = max(post_comments)
+                return dictionary[max_comments]
+        elif int(choice) == 4:
+                dictionary = dict(zip(post_ids, post_comments))
+                dictionary=sorted(dictionary, key=dictionary.__getitem__)
+                min_comments = min(post_comments)
+                return dictionary[min_comments]
+        else:
+            print("You entered the wrong choice. Please choose from given options.")
+        choice = input("\nEnter your choice (1 or 2 or 3 or 4 ) : ")
 
-def like_on_user_post_id(user_id):
-    user_current_post_id=get_user_post_id(user_id)
+
+def like_on_user_post_id(username):
+    user_current_post_id=get_user_post_id(username)
     Access_token={'access_token':App_Access_token}                                             #To like a user_post
     url_post_like= BASE_URL+"media/"+(user_current_post_id)+"/likes"
-    requests.post(url_post_like,Access_token).json()
-like_on_user_post_id("rk_chaudhary300")
+    data=requests.post(url_post_like,Access_token).json()
+    if data['meta']['code'] == 200:
+        print("The post has been liked.")
+    else:
+        print("Some error occurred! Try Again.")
+#like_on_user_post_id("manpreet287")
 
-def comment_on_user_id(user_id):
-    user_current_post_id=get_user_post_id(user_id)
-    Access_token_Plus_comment ={'access_token':App_Access_token,'text':"kkt"}                #To comment on user_id
-    url_post_comment= BASE_URL+"media/"+user_current_post_id+"/comments"
-    requests.post(url_post_comment,Access_token_Plus_comment).json()
+def comment_on_user_id(username):
+    user_current_post_id=get_user_post_id(username)
+    url_post_comment = BASE_URL + "media/" +str(user_current_post_id)+ "/comments"
+    print ("enter the commant u want to post.\nNOTE THAT\nThe total length of the comment cannot exceed 300 characters.\nThe comment cannot contain more than 4 hashtags.\nThe comment cannot contain more than 1 URL\nThe comment cannot consist of all capital letters.\n")
+    text=raw_input()
+    text=str(text)
+    Access_token_Plus_comment = {'access_token': App_Access_token, 'text': text}
+    data = requests.post(url_post_comment, Access_token_Plus_comment).json()
+    if data['meta']['code'] == 200:
+        print("\nYour comment has been Posted.")
+    else:
+        print("\nSome error occurred! Try Again.")
 
-comment_on_user_id("rk_chaudhary300")
