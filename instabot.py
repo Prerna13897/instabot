@@ -167,7 +167,7 @@ def search_comment_id(username): # for searching a paricular comment from post i
             print(str(i+1) + ". " + comments_found[i])
         return comments_id_found, post_id, comments_found, user_found
 
-#search_comment_id("manpreet287")
+search_comment_id("manpreet287")
 
 def delete_comment(username):
     comments_id_found,post_id,comments_found,user_found=search_comment_id(username)
@@ -185,7 +185,6 @@ def delete_comment(username):
             print("%s --> %s as it is made by %s." % (comments_found[i], data['meta']['error_code'], user_found[i]))
         else:
             print("Some error occurred. Try Again Later!!")
-
 
 
 
