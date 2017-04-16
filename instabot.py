@@ -187,7 +187,7 @@ def delete_comment(username):
             print("Some error occurred. Try Again Later!!")
 
 def avg_words_per_comment(post_id):
-    user_id=client_search_by_username(username,post)
+    user_id=client_search_by_username(username,post_id)
     post_id=get_user_post_id(username)
     url= BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" + App_Access_token
     fetch_info =requests.get(url).json()
@@ -203,9 +203,12 @@ def avg_words_per_comment(post_id):
              comments_id.append(comment['id'])
          average_words = float(no_of_words) / len(list_of_comments)
          print("average no of words per comment in post print = %.2f" % average_words)
+def end_it():
+    print("\nTHANKS FOR USING INSTABOT\nhope you enjoy the services")
+
 print("\nHello User! Welcome to the Instabot Environment.")
 Input ="y" or "Y"
-while Input =="y" or "Y":
+if Input =="y" or "Y":
     print("Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")
     username = raw_input()
     if username not in ['manpreet287', 'rk_chaudhary300']:
@@ -224,7 +227,7 @@ while Input =="y" or "Y":
      print("\n9. Get the average no. of words per comment in specified post.")
      print("\n10. Exit.\n\n")
      choice=raw_input()
-     if choice in ['1', '2', '3', '4', '5', '6', '7', '8','9']:
+     if choice in ['1', '2', '3', '4', '5', '6', '7', '8','9','10']:
        if choice == "1":
          admin_info()  # for like a pic
        elif choice == "2":
@@ -247,19 +250,15 @@ while Input =="y" or "Y":
            delete_comment(username)
        elif choice =='9':
            avg_words_per_comment(post_id)
-       elif choice == '10':
-          break
-
-     else :
+       elif choice =='10':
+            end_it()
+     else:
          print("You entered the wrong choice. Please choose from given options.")
-         choice = input("\nEnter your choice (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9) : ")
-
+         choice = input("\nEnter your choice (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10) : ")
     print ("\npress 'Y' or 'y' to continue or press any key to exit\n")
     Input = raw_input()
-
-print("\nTHANKS FOR USING INSTABOT\nhope you enjoy the services")
-
-
+else:
+   print("________________-----------------INSTABOT-------------------_____________________")
 
 
 
