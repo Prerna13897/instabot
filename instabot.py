@@ -62,7 +62,7 @@ def info_of_user(username):     #search for user by username
 
 def get_user_post_id(username):
     if username not in ['manpreet287', 'rk_chaudhary300']:
-        print"you enter wrong wrong username"
+        print"you enter wrong username"
         return
     else:
      insta_user_id=client_search_by_username(username)                 #The function should make use of the above created function to fetch the user's Id using the username.
@@ -88,7 +88,8 @@ def get_user_post_id(username):
         print("1. The post having maximum likes.")
         print("2. The post having minimum likes.")
         print("3. The post on the basis of comments.")
-        print("\n Enter your choice from 1 or 2 or 3\n")
+        print("4. just want the recent post by giving the post number.")
+        print("\n Enter your choice from 1 or 2 or 3 or 4\n")
         choice=raw_input()
         if int(choice) == 1:
             dictionary = dict(zip(post_ids, post_likes))
@@ -105,9 +106,17 @@ def get_user_post_id(username):
             dictionary = sorted(dictionary, key=dictionary.__getitem__)
             min_comments = min(post_comments)
             return dictionary[min_comments], post_links[min_comments]
+        elif int(choice) == 4:
+            user_input = int(raw_input("\n enter the post number for which you want to get the id \n"))
+            if len(request_to_get_all_post) > user_input >= 0:
+              return request_to_get_all_post['data'][user_input]['id'],request_to_get_all_post['data'][user_input]['link']
+            else:
+             print "you will get the default id because this post is not in recent posts "
+             return request_to_get_all_post['data'][0]['id'],request_to_get_all_post['data'][0]['link']
         else:
-            print("You entered the wrong choice. Please choose from given options.")
-        choice = input("\nEnter your choice (1 or 2 or 3 ) : ")
+             print("you choose a wrong input")
+             print "So!!!!you will get the default id "
+             return request_to_get_all_post['data'][0]['id'], request_to_get_all_post['data'][0]['link']
 
 
 def like_on_user_post_id(username):
@@ -138,10 +147,10 @@ def comment_on_user_id(username):
 #comment_on_user_id("manpreet287")
 def search_comment_id(username): # for searching a paricular comment from post id of gien user username
     post_id,post_link=get_user_post_id(username)
-    print ("Enter the word you want to search in comments of most interesting post : ")
+    print ("Enter the word you want to search in comments of most interesting post to get data related to comment : ")
     search = raw_input()
     word_to_be_searched = str(search)
-    url = BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" + App_Access_token
+    url = BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" +App_Access_token
     request_comments = requests.get(url).json()
     list_of_comments = []
     comments_id = []
@@ -187,28 +196,36 @@ def delete_comment(username):
             print("Some error occurred. Try Again Later!!")
 
 def avg_words_per_comment(post_id):
-    user_id=client_search_by_username(username,post_id)
-    post_id=get_user_post_id(username)
-    url= BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" + App_Access_token
-    fetch_info =requests.get(url).json()
-    if len(fetch_info['data'])==0:
-       print("there is no comment on this post")
+    url = BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" + App_Access_token
+    print post_id
+    data = requests.get(url).json()
+    if len(data['data']) == 0:
+        print("There are no comments on this post...")
     else:
-         list_of_comments= []
-         no_of_words = 0
-         comments_id = []
-         for commments in fetch_info['data']:
-             list_of_comments.append(comment['text'])
-             no_of_words += len(comment['text'].split())
-             comments_id.append(comment['id'])
-         average_words = float(no_of_words) / len(list_of_comments)
-         print("average no of words per comment in post print = %.2f" % average_words)
+        list_of_comments = []
+        total_no_of_words = 0
+        comments_id = []
+        for comment in data['data']:
+            list_of_comments.append(comment['text'])
+            total_no_of_words += len(comment['text'].split())
+            comments_id.append(comment['id'])
+        average_words = float(total_no_of_words)/len(list_of_comments)
+        print("\nAverage no. of words per comment in most interesting post = %.2f" % average_words)
+
+
+# Helper Function to find Average Number of Words per Comment. Made to complete the Need of Objective.
+def average_words_per_comment(username):
+    user_id = client_search_by_username(username)
+    if user_id:
+            post_id, post_link = get_user_post_id(username)
+            avg_words_per_comment(post_id)
+
 def end_it():
     print("\nTHANKS FOR USING INSTABOT\nhope you enjoy the services")
 
 print("\nHello User! Welcome to the Instabot Environment.")
 Input ="y" or "Y"
-if Input =="y" or "Y":
+while Input == 'y'or Input == 'Y':
     print("Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")
     username = raw_input()
     if username not in ['manpreet287', 'rk_chaudhary300']:
@@ -249,16 +266,18 @@ if Input =="y" or "Y":
        elif choice == '8':
            delete_comment(username)
        elif choice =='9':
-           avg_words_per_comment(post_id)
+            average_words_per_comment(username)
        elif choice =='10':
             end_it()
      else:
          print("You entered the wrong choice. Please choose from given options.")
          choice = input("\nEnter your choice (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10) : ")
-    print ("\npress 'Y' or 'y' to continue or press any key to exit\n")
+    print ("\npress 'Y' or 'y' to continue or press any key to exit \n")
     Input = raw_input()
 else:
    print("________________-----------------INSTABOT-------------------_____________________")
+   print("************************HOPE YOU ENJOY OUR SERVICE********************************")
+   print ("__________________________Have a nice day :D___________________________________")
 
 
 
