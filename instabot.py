@@ -1,7 +1,14 @@
-# ______________________________________________________INSTABOT_______________________________________________________________________#
+# coding=utf-8
+# __________********______________________________________INSTABOT_________________________________________************__________________#
+
+#Install requests library
 import requests
+#Generate an access token from instagram.com/developer,,,,Make a global variable for the instagram API access token.
 App_Access_token = "5000190155.fc9a349.697c42586a294b6db99b941b0f84f1a2"
+#Make a global variable for the base url for all the requests
 BASE_URL = "https://api.instagram.com/v1/"
+
+#Make a function declaration to fetch your own details. It should not accept any input parameter.
 def admin_info():
     owner_url = BASE_URL + "users/self/?access_token=" + App_Access_token   #https://api.instagram.com/v1/users/self/?access_token=ACCESS-TOKEN
     owner_info = requests.get(owner_url).json()                             #Get information about the owner of the access_token
@@ -21,9 +28,10 @@ def admin_info():
         print("Bio                     : ", owner_info['data']['bio'])
     else:
         print("Bio                     :  No Info Available")
-#admin_info()
 
-def client_search_by_username(username):                                    #search for user by username
+
+#function declaration to get another user’s Id.
+def client_search_by_username(username):
     client_url=BASE_URL+"users/search?q="+username+"&access_token="+App_Access_token    #Get a list of users matching the query
     client_info=requests.get(client_url).json()                              #The function should make a GET call to search user with the particular username
     #print client_info
@@ -34,7 +42,6 @@ def client_search_by_username(username):                                    #sea
         user_id = client_info['data'][0]['id']    #If multiple users are found the function should accept the first one
         return user_id                                                       #Upon successful search, the function should return the user's id
 
-#client_search_by_username("manpreet287")#https://api.instagram.com/v1/users/{user-id}/?access_token=ACCESS-TOKEN
 def info_of_user(username):     #search for user by username
     user_id=client_search_by_username(username)
     client_url=BASE_URL+"users/"+user_id+"/?access_token="+App_Access_token    #Get a list of users matching the query
@@ -60,6 +67,7 @@ def info_of_user(username):     #search for user by username
         else:
             print("Bio                     :  No Info Available")
 
+#Make a function declaration to fetch another user’s public posts. It should accept his/her username as an input parameter
 def get_user_post_id(username):
     if username not in ['manpreet287', 'rk_chaudhary300']:
         print"you enter wrong username"
@@ -87,7 +95,7 @@ def get_user_post_id(username):
         print("\nWhich Recent Post you want to select ?")
         print("1. The post having maximum likes.")
         print("2. The post having minimum likes.")
-        print("3. The post on the basis of comments.")
+        print("3. The post having minimum comments.")
         print("4. just want the recent post by giving the post number.")
         print("\n Enter your choice from 1 or 2 or 3 or 4\n")
         choice=raw_input()
@@ -115,21 +123,21 @@ def get_user_post_id(username):
              return request_to_get_all_post['data'][0]['id'],request_to_get_all_post['data'][0]['link']
         else:
              print("you choose a wrong input")
-             print "So!!!!you will get the default id "
+             print "So!!!!you will get the default id that is most recent post of the user "
              return request_to_get_all_post['data'][0]['id'], request_to_get_all_post['data'][0]['link']
 
-
+#Make a function declaration to like a post. It should accept the user’s username as input parameter.
 def like_on_user_post_id(username):
     post_id,post_links=get_user_post_id(username)
-    Access_token={'access_token':App_Access_token}                                             #To like a user_post
-    url_post_like= BASE_URL+"media/"+str(post_id)+"/likes"
-    data=requests.post(url_post_like,Access_token).json()
+    Access_token={'access_token':App_Access_token}
+    url_post_like= BASE_URL+"media/"+str(post_id)+"/likes"                                   #To like a user_post
+    data=requests.post(url_post_like,Access_token).json()                                    #to post a like
     if data['meta']['code'] == 200:
         print("The post has been liked.")
     else:
         print("Some error occurred! Try Again.")
-#like_on_user_post_id("manpreet287")
 
+#Make a function declaration to comment on a post. It should accept the user's username for whose post you want to comment on.
 def comment_on_user_id(username):
     post_id,post_link=get_user_post_id(username)
     url_post_comment = BASE_URL + "media/" +post_id+ "/comments"
@@ -143,9 +151,8 @@ def comment_on_user_id(username):
     else:
         print("\nSome error occurred! Try Again.")
 
-
-#comment_on_user_id("manpreet287")
-def search_comment_id(username): # for searching a paricular comment from post id of gien user username
+# for searching a paricular comment from post id of given user username
+def search_comment_id(username):
     post_id,post_link=get_user_post_id(username)
     print ("Enter the word you want to search in comments of most interesting post to get data related to comment : ")
     search = raw_input()
@@ -162,7 +169,7 @@ def search_comment_id(username): # for searching a paricular comment from post i
     comments_found = []
     comments_id_found = []
     user_found = []
-    for i in range(0,len(list_of_comments),1):
+    for i in range(0,len(list_of_comments),1):                               #loop over the comments
         if word_to_be_searched in list_of_comments[i]:
             comments_found.append(list_of_comments[i])
             comments_id_found.append(comments_id[i])
@@ -178,6 +185,7 @@ def search_comment_id(username): # for searching a paricular comment from post i
 
 #search_comment_id("manpreet287")
 
+#Make a function declaration to delete the comment that contains a particular word. It should accept the users' username as the input parameters.
 def delete_comment(username):
     comments_id_found,post_id,comments_found,user_found=search_comment_id(username)
     if(comments_found==0):
@@ -195,6 +203,7 @@ def delete_comment(username):
         else:
             print("Some error occurred. Try Again Later!!")
 
+#Make a function that prints the average number of words per comment...It should take the post's id as input parameter
 def avg_words_per_comment(post_id):
     url = BASE_URL + "media/" + str(post_id) + "/comments/?access_token=" + App_Access_token
     print post_id
@@ -213,26 +222,27 @@ def avg_words_per_comment(post_id):
         print("\nAverage no. of words per comment in most interesting post = %.2f" % average_words)
 
 
-# Helper Function to find Average Number of Words per Comment. Made to complete the Need of Objective.
+#Helper function to give post_id to avg_words_per_comment(post_id).
 def average_words_per_comment(username):
     user_id = client_search_by_username(username)
     if user_id:
             post_id, post_link = get_user_post_id(username)
             avg_words_per_comment(post_id)
-
+#exit function
 def end_it():
     print("\nTHANKS FOR USING INSTABOT\nhope you enjoy the services")
 
 print("\nHello User! Welcome to the Instabot Environment.")
+admin_info()
 Input ="y" or "Y"
 while Input == 'y'or Input == 'Y':
-    print("Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")
+    print("Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")     #The bot should ask the username for which you want to perform any of the action
     username = raw_input()
     if username not in ['manpreet287', 'rk_chaudhary300']:
         print"you enter wrong username"
         print("please!!Choose the username from following \n  manpreet287  \n  rk_chaudhary300 ")
     else :
-     print("\nWhat do you want to do using the bot?")
+     print("\nWhat do you want to do using the bot?")                           #The bot should ask the user of what they want to do for the username already provided
      print("\n1. Get the Details of the owner.")
      print("\n2. Get the UserId of the User.")
      print("\n3. Get Information about the User.")
